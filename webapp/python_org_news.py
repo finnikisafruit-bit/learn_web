@@ -3,7 +3,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
-from webapp.model import db, News
+from webapp.db import db
+from webapp.news.models import News
 
 
 def get_html(url):
@@ -11,25 +12,23 @@ def get_html(url):
         result = requests.get(url)
         result.raise_for_status()
         return result.text
-    except(requests.RequestException, ValueError):
+    except (requests.RequestException, ValueError):
         print("Сетевая ошибка")
         return False
-    
+
+
 def get_python_news():
     html = get_html("https://www.python.org/blogs/")
-    if html:         
-        soup = BeautifulSoup(html, 'html.parser')
-        all_news = soup.find('ul', class_='list-recent-posts').findAll('li')
+    if html:
+        soup = BeautifulSoup(html, "html.parser")
+        all_news = soup.find("ul", class_="list-recent-posts").findAll("li")
         result_news = []
         for news in all_news:
-            link = news.find('a')
-            title = news.find('a').text
-            url = link['href']
-            published = news.find('time').text
-            try:
-                published = datetime.strptime(published, '%Y-%m-%d')
-            except ValueError:
-                published = datetime.now()
+            link = news.find("a")
+            title = news.find("a").text
+            url = link["href"]
+            time_tag = news.find("time")
+            published = datetime.strptime(time_tag["datetime"], "%Y-%m-%d")
             save_news(title, url, published)
 
 

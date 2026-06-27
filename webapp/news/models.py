@@ -1,6 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from webapp.db import db
 
-db = SQLAlchemy()
 
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -10,4 +9,4 @@ class News(db.Model):
     text = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
-        return f'<News {self.title} {self.url}>'
+        return f"<News {self.title} {self.url}>"
